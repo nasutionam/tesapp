@@ -1,0 +1,36 @@
+from flask import Flask, jsonify
+import mysql.connector
+import os
+
+app = Flask(__name__)
+
+# Ambil konfigurasi database dari environment variable
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_USER = os.getenv("DB_USER", "root")
+DB_PASS = os.getenv("DB_PASS", "password")
+DB_NAME = os.getenv("DB_NAME", "testdb")
+
+def get_db_connection():
+    return mysql.connector.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASS,
+        database=DB_NAME
+    )
+
+@app.route("/")
+def hello():
+    return "Tes Python dan MySQL"
+
+@app.route("/users")
+def get_users():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id, name FROM users;")
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jsonify(rows)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)

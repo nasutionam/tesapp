@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Virtual environments
+env/
+venv/
+.venv/
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# Byte-compiled / logs
+*.log
+
+# Docker
+*.pid
+*.seed
+*.bak
+*.swp
+.docker/
+docker-compose.override.yml
+
+# MySQL volume data (jangan ikut ke git)
+db_data/
+
+# System files
+.DS_Store
+Thumbs.db
