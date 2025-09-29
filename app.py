@@ -29,15 +29,18 @@ def hello():
 
 @app.route("/users")
 def get_users():
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({"error": "Cannot connect to database"}), 500
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT id, name FROM users;")
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return jsonify(rows)
+    try:
+        conn = get_db_connection()
+        if not conn:
+            return jsonify({"error": "Cannot connect to database"}), 500
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id, name FROM users;")
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(rows)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
