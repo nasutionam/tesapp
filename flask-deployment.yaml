@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: flask-mysql-app
-        image: asia-southeast2-docker.pkg.dev/bespin-sandbox/flask-mysql/flask-mysql-app:1.0
+        image: asia-southeast2-docker.pkg.dev/bespin-sandbox/flask-mysql/flask-mysql-app:6.0
         ports:
         - containerPort: 5000
         env:
