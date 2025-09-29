@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-app
+  name: flask-mysql-app
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: flask-app
+      app: flask-mysql-app
   template:
     metadata:
       labels:
-        app: flask-app
+        app: flask-mysql-app
     spec:
       containers:
-      - name: flask
+      - name: flask-mysql-app
         image: asia-southeast2-docker.pkg.dev/bespin-sandbox/flask-mysql/flask-mysql-app:1.0
         ports:
         - containerPort: 5000
@@ -48,11 +48,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-service
+  name: flask-mysql-app
 spec:
   type: LoadBalancer
   selector:
-    app: flask-app
+    app: flask-mysql-app
   ports:
   - protocol: TCP
     port: 80
