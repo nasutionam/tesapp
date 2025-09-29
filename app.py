@@ -5,9 +5,9 @@ import os
 app = Flask(__name__)
 
 # Ambil konfigurasi database dari environment variable
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_USER = os.getenv("DB_USER", "root")
-DB_PASS = os.getenv("DB_PASS", "password")
+DB_HOST = os.getenv("DB_HOST", "10.1.10.14")
+DB_USER = os.getenv("DB_USER", "appuser")
+DB_PASS = os.getenv("DB_PASS", "AppPass123")
 DB_NAME = os.getenv("DB_NAME", "testdb")
 
 def get_db_connection():
