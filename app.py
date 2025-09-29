@@ -11,12 +11,17 @@ DB_PASS = os.getenv("DB_PASS", "password")
 DB_NAME = os.getenv("DB_NAME", "testdb")
 
 def get_db_connection():
-    return mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASS,
-        database=DB_NAME
-    )
+    try:
+        conn = mysql.connector.connect(
+            host=DB_HOST,
+            user=DB_USER,
+            password=DB_PASS,
+            database=DB_NAME
+        )
+        return conn
+    except mysql.connector.Error as e:
+        print(f"Error connecting to MySQL: {e}")
+        return None
 
 @app.route("/")
 def hello():
@@ -25,6 +30,8 @@ def hello():
 @app.route("/users")
 def get_users():
     conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "Cannot connect to database"}), 500
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT id, name FROM users;")
     rows = cursor.fetchall()
