@@ -39,6 +39,10 @@ pipeline {
             }
         }
 
+        environment {
+            USE_GKE_GCLOUD_AUTH_PLUGIN = "True"
+            }
+
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
