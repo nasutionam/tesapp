@@ -43,9 +43,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                    kubectl set image deployment/flask-mysql-app flask=$IMAGE:latest --record || \
+                    kubectl set image deployment/flask-mysql-app flask-mysql-app=$IMAGE:latest --record || \
                     kubectl apply -f flask-deployment.yaml
-
                 '''
             }
         }
