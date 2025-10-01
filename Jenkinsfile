@@ -9,6 +9,7 @@ pipeline {
         IMAGE_NAME   = "flask-mysql-app"
         IMAGE        = "${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${IMAGE_NAME}"
         GCLOUD_KEY   = credentials('sa-jenkins')
+        USE_GKE_GCLOUD_AUTH_PLUGIN = "True"
     }
 
     stages {
@@ -38,10 +39,6 @@ pipeline {
                 '''
             }
         }
-
-        environment {
-            USE_GKE_GCLOUD_AUTH_PLUGIN = "True"
-            }
 
         stage('Deploy to Kubernetes') {
             steps {
