@@ -5,7 +5,7 @@ pipeline {
         choice(
             name: 'ACTION',
             choices: ['build-and-deploy', 'deploy-only', 'release-and-deploy', 'rollout-restart'],
-            description: 'action for jenkins'
+            description: 'Action for Jenkins pipeline'
         )
     }
 
@@ -36,14 +36,6 @@ pipeline {
             when { expression { params.ACTION == 'build-and-deploy' || params.ACTION == 'release-and-deploy' } }
             steps {
                 sh '''
-                    docker build -t $IMAGE:latest .
-                    docker push $IMAGE:latest
-                '''
-            }
-        }
-
-            steps {
-                sh '''
                     if [ "$ACTION" = "release-and-deploy" ]; then
                         TAG=$(date +%Y%m%d%H%M)
                         echo "Building release with tag $TAG"
@@ -71,9 +63,11 @@ pipeline {
             when { expression { params.ACTION == 'build-and-deploy' || params.ACTION == 'deploy-only' || params.ACTION == 'release-and-deploy' } }
             steps {
                 sh '''
+                    IMAGE=$(cat image.env | cut -d '=' -f2)
+
                     if kubectl get deployment $DEPLOYMENT_NAME > /dev/null 2>&1; then
                         echo "Updating image..."
-                        kubectl set image deployment/$DEPLOYMENT_NAME $DEPLOYMENT_NAME=$IMAGE:latest --record
+                        kubectl set image deployment/$DEPLOYMENT_NAME $DEPLOYMENT_NAME=$IMAGE --record
                     else
                         echo "Deployment not found, creating from YAML..."
                         kubectl apply -f flask-deployment.yaml
@@ -100,3 +94,4 @@ pipeline {
             }
         }
     }
+}
