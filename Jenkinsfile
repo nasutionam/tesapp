@@ -7,6 +7,11 @@ pipeline {
             choices: ['build-and-deploy', 'deploy-only', 'release-and-deploy', 'rollout-restart'],
             description: 'Action for Jenkins pipeline'
         )
+        string(
+            name: 'IMAGE_TAG',
+            defaultValue: 'latest',
+            description: 'Tag image for deploy (ex: latest, 202510021200)'
+        )
     }
 
     environment {
@@ -35,19 +40,24 @@ pipeline {
         stage('Build & Push Docker Image') {
             when { expression { params.ACTION == 'build-and-deploy' || params.ACTION == 'release-and-deploy' } }
             steps {
-                sh '''
-                    if [ "$ACTION" = "release-and-deploy" ]; then
-                        TAG=$(date +%Y%m%d%H%M)
-                        echo "Building release with tag $TAG"
-                        docker build -t $IMAGE:$TAG .
-                        docker push $IMAGE:$TAG
-                        echo "IMAGE=$IMAGE:$TAG" > image.env
-                    else
-                        docker build -t $IMAGE:latest .
-                        docker push $IMAGE:latest
-                        echo "IMAGE=$IMAGE:latest" > image.env
-                    fi
-                '''
+                script {
+                    if (params.ACTION == 'release-and-deploy') {
+                        def tag = sh(script: "date +%Y%m%d%H%M", returnStdout: true).trim()
+                        env.IMAGE_TAG = tag
+                        sh """
+                            echo "Building release with tag $IMAGE_TAG"
+                            docker build -t $IMAGE:$IMAGE_TAG .
+                            docker push $IMAGE:$IMAGE_TAG
+                        """
+                    } else {
+                        env.IMAGE_TAG = "latest"
+                        sh """
+                            echo "Building image with tag latest"
+                            docker build -t $IMAGE:latest .
+                            docker push $IMAGE:latest
+                        """
+                    }
+                }
             }
         }
 
